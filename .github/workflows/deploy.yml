@@ -24,9 +24,6 @@ jobs:
 
       - name: 构建 H5
         env:
-          # 后端 API 地址（在 GitHub 仓库 Settings → Secrets 里设置）
-          TARO_APP_API_BASE: ${{ secrets.TARO_APP_API_BASE }}
-          # GitHub Pages 路径，格式：/仓库名/
           TARO_APP_PUBLIC_PATH: /${{ github.event.repository.name }}/
         run: npm run build:h5
 
