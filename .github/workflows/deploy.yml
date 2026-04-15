@@ -1,0 +1,37 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 安装依赖
+        run: npm install --registry=https://registry.npmmirror.com
+
+      - name: 构建 H5
+        env:
+          # 后端 API 地址（在 GitHub 仓库 Settings → Secrets 里设置）
+          TARO_APP_API_BASE: ${{ secrets.TARO_APP_API_BASE }}
+          # GitHub Pages 路径，格式：/仓库名/
+          TARO_APP_PUBLIC_PATH: /${{ github.event.repository.name }}/
+        run: npm run build:h5
+
+      - name: 部署到 gh-pages 分支
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
